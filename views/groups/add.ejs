@@ -1,0 +1,15 @@
+<%- include("../partials/header") %>
+
+<div class="ui two column centered grid">
+    <div class="column">
+        <form class="ui form" action="/groups" method="POST">
+            <div class="field">
+                <label>Group Name</label>
+                <input type="text" name="name" placeholder="Group Name">
+            </div>        
+            <input class="ui blue button" type="submit" value="Create">
+        </form>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>

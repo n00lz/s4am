@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <title>S4AM</title>
+</head>
+<body>
+    <div class="ui left fixed inverted vertical menu">
+        <div class="item">
+          <img class="ui mini image" src="/images/logo.png">
+        </div>
+        <a class="item" href="/users">Users</a>
+        <a class="item" href="/groups">Groups</a>
+        <!-- <a class="item">Sign-in</a> -->
+        <form action="/logout" method="POST">
+            <button>Logout</button>
+        </form>
+    </div>
+    <div class="pusher">
+        <div class="main-content">
+

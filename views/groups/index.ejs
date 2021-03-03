@@ -1,0 +1,64 @@
+<%- include("../partials/header") %>
+<div class="ui two column centered grid">
+    <div class="column">
+        <table id="groups" class="display nowrap">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Group Name</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i = 0; i < groups.length; i++){ %>
+                <tr>
+                    <td>#ID</td>
+                    <td><%= groups[i] %></td>
+                    <td><button id="delete" class="ui red basic mini button" data-user="<%- groups[i] %>">Delete</button></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(function () {
+    $('#groups').DataTable({
+      'paging'      : true,
+      'iDisplayLength': 5,
+      'lengthChange': false,
+      'searching'   : false,
+      'ordering'    : true,
+      'info'        : true,
+      'autoWidth'   : false
+    })
+  })
+</script>
+<script>
+    function deleteGroup($groupname){
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "/groups/del/" + $groupname,
+            data: JSON.stringify({'groupname': $groupname}),
+            dataType: "json"
+        }).done(function(data){
+            // console.log("ajax: " + data.deleted);
+            alert(data.message);
+            if(data.deleted == true){
+                location.reload();
+            }
+        }).fail(function(xhr, status, error){
+            let errorMessage = xhr.status + ': ' + xhr.statusText;
+            alert('Error - ' + errorMessage);
+        });
+    }
+
+    $("#groups #delete").click(function(){
+        let groupname = $(this).attr('data-user');
+        if(confirm('Do you want to delete ' + groupname + ' group?')){
+            deleteGroup(groupname);
+        }
+    });
+</script>        
+<%- include("../partials/footer") %>

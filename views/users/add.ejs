@@ -1,0 +1,26 @@
+<%- include("../partials/header") %>
+<div class="ui two column centered grid">
+    <div class="column">
+        <form class="ui form" action="/users" method="POST">
+            <div class="field">
+                <label>First Name</label>
+                <input type="text" name="name" placeholder="First Name">
+            </div>
+            <div class="field">
+                <label>Last Name</label>
+                <input type="text" name="surname" placeholder="Last Name">
+            </div>
+            <div class="field">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Username">
+            </div>
+            <div class="field">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password">
+            </div>
+            <input class="ui blue button" type="submit" value="Create">
+        </form>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>
