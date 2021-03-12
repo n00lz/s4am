@@ -1,11 +1,15 @@
 const express   = require('express');
 const bcrypt    = require('bcrypt');
 const Login     = require('../models/login');
+const User      = require('../models/user');
 const middleware = require('../middleware/index');
 const router    = express.Router();
 
 router.get('/', middleware.isLoggedIn, (req, res) => {
-    res.render('index');
+    let dUsers = User.disabledUsers();
+    let listUsers = dUsers.toString().split('\n').filter(function(i){return i});
+    console.log(listUsers);
+    res.render('index', {disabledUsers: listUsers});
 });
 
 router.get('/login', (req, res) => {

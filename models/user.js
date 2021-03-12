@@ -72,6 +72,17 @@ function resetPassword(username, password){
     return res;
 }
 
+function disabledUsers(){
+    let commands = [];
+    commands.push("kinit administrator@WWFX.INT -kt /root/krb5.keytab");
+    commands.push("ldapsearch -H ldap://192.168.20.2 -Y GSSAPI -b 'DC=wwfx,DC=int' '(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))'");
+    commands.push("sed -n 's/^[ \t]*uid:[ \t]*\\(.*\\)/\\1/p'");
+    let cli = commands.join('|');
+    console.log(cli);
+    let res = execSync(cli);
+    return res;
+}
+
 function getUsers(){
     let users = {'result': []};
     // let commands = [];
@@ -96,4 +107,5 @@ function getUsers(){
 exports.createUser = createUser;
 exports.resetPassword = resetPassword;
 exports.deleteUser = deleteUser;
+exports.disabledUsers = disabledUsers;
 exports.getUsers = getUsers;

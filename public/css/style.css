@@ -2,11 +2,11 @@ body > .grid {
     height: 100%;
 }
 
+#login {
+    max-width: 450px;
+}
+
 .main-content {
     margin-left: 15rem;
     margin-top: 40px;
-}
-
-#login {
-    max-width: 450px;
 }

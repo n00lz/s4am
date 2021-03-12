@@ -2,5 +2,13 @@
         </div>
     <!-- Pusher end -->
     </div>
+    <!-- Show dimmed loader while page is loading -->
+    <div class="ui page dimmer">
+        <div class="ui text loader">Loading</div>
+    </div>
+    
+    <script>
+        $('.menu .item').click(function(){$('body').dimmer('show')});
+    </script>
 </body>
 </html>
