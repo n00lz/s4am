@@ -6,9 +6,9 @@ const middleware = require('../middleware/index');
 const router    = express.Router();
 
 router.get('/', middleware.isLoggedIn, (req, res) => {
+    User.getNewTicket();
     let dUsers = User.disabledUsers();
-    let listUsers = dUsers.toString().split('\n').filter(function(i){return i});
-    console.log(listUsers);
+    let listUsers = dUsers;
     res.render('index', {disabledUsers: listUsers});
 });
 

@@ -40,14 +40,36 @@ router.get('/add', middleware.isLoggedIn, (req, res) => {
 router.get('/reset', middleware.isLoggedIn, (req, res) => {
     let username = req.query.username;
     let password = req.query.password;
-    console.log(req.query);
+    // console.log(req.query);
     let result = user.resetPassword(username, password);
     if(result){
         return res.json({message:result.toString(), deleted:true});
     } else {
         return res.json({message:'Password was not change.', deleted:false});
     }
-})
+});
+
+router.get('/dis/:user', (req, res) => {
+    let username = req.params.user;
+    let result = user.disableUser(username);
+    if(result){
+        return res.json({message:result.toString(), deleted:true});
+    } else {
+        return res.json({message:'No disabled user', deleted:false});
+    }
+    
+});
+
+router.get('/enable/:user', (req, res) => {
+    let username = req.params.user;
+    let result = user.enableUser(username);
+    if(result){
+        return res.json({message:result.toString(), deleted:true});
+    } else {
+        return res.json({message:'No disabled user', deleted:false});
+    }
+    
+});
 
 // UPDATE USER
 

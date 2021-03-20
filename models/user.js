@@ -1,5 +1,6 @@
 const { exec, execSync }  = require('child_process');
 const fs = require('fs');
+const { Duplex } = require('stream');
 
 function cmd(shell_cmd){
     exec(shell_cmd, (error, stdout, stderr) => {
@@ -66,25 +67,43 @@ function deleteUser(username){
     return res;
 }
 
+function disableUser(username){
+    let cli = `samba-tool user disable ${username}`;
+    let res = execSync(cli);
+    return res;
+}
+
+function enableUser(username){
+    let cli = `samba-tool user enable ${username}`;
+    let res = execSync(cli);
+    return res;
+}
+
 function resetPassword(username, password){
     let cli = `samba-tool user setpassword ${username} --newpassword=${password}`;
     let res = execSync(cli);
     return res;
 }
 
+function getNewTicket(){
+    let cli = 'kinit administrator@WWFX.INT -kt /root/krb5.keytab';
+    let res = cmd(cli);
+    return res;
+}
+
 function disabledUsers(){
     let commands = [];
-    commands.push("kinit administrator@WWFX.INT -kt /root/krb5.keytab");
     commands.push("ldapsearch -H ldap://192.168.20.2 -Y GSSAPI -b 'DC=wwfx,DC=int' '(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))'");
     commands.push("sed -n 's/^[ \t]*uid:[ \t]*\\(.*\\)/\\1/p'");
     let cli = commands.join('|');
     console.log(cli);
     let res = execSync(cli);
-    return res;
+    return res.toString().split('\n').filter(function(i){return i});
 }
 
 function getUsers(){
     let users = {'result': []};
+    let dUsers = disabledUsers();
     // let commands = [];
     // commands.push('samba-tool user list');
     // commands.push('egrep -v "Guest|krbtgt"');
@@ -92,20 +111,30 @@ function getUsers(){
     // let res = ('samba-tool user list|egrep -v "Guest|krbtgt"');
     let cli = execSync('pdbedit -Lf');
     let listUsers = cli.toString().split('\n');
-    // console.log(listUsers[0].split(':')[2]);
 
     for(let i = 0;  i < listUsers.length; i++){
         if(listUsers[i].split(':')[2]){
-            users['result'].push({'username': listUsers[i].split(':')[0], 'fullName': listUsers[i].split(':')[2]});
-        } //else {
-        //     users['result'].push({'username': user.split(':')[0], 'fullName': user.split(':')[0]()});
-        // }
+            users['result'].push({'username': listUsers[i].split(':')[0], 'id': listUsers[i].split(':')[1], 'fullName': listUsers[i].split(':')[2]});
+        }
     }
+
+    // Remove disabled users from users array
+    for(let i = 0; i < users.result.length; i++){
+        dUsers.forEach(user => {
+            if(user == users.result[i].username){
+                users.result.splice(i, 1);
+            }
+        })
+    }
+
     return users;
 }
 
 exports.createUser = createUser;
 exports.resetPassword = resetPassword;
+exports.getNewTicket = getNewTicket;
 exports.deleteUser = deleteUser;
+exports.disableUser = disableUser;
+exports.enableUser = enableUser;
 exports.disabledUsers = disabledUsers;
 exports.getUsers = getUsers;

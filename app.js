@@ -22,7 +22,8 @@ const indexRoutes = require('./routes/index');
 let url = "mongodb://localhost:27017/s4am";
 mongoose.connect(url,{
     useNewUrlParser: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useUnifiedTopology: true
 }).then(() => {
     console.log('Connected to DB!');
 }).catch(err => {

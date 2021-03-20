@@ -32,13 +32,13 @@
             </div>
         </div>
     </div>
-    <div class="four wide column">
+    <div id="users" class="four wide column">
         <div class="content">
             <div class="ui middle aligned divided list">
                 <% disabledUsers.forEach(user => { %>
                 <div class="item">
                     <div class="right floated content">
-                        <div class="ui button">Enable</div>
+                        <div id="enable" class="ui button" data-user="<%- user %>">Enable</div>
                     </div>
                     <img class="ui avatar image" src="/images/avatar.png">
                     <div class="content">
@@ -50,4 +50,31 @@
         </div>
     </div>
 </div>
+<script>
+	function enableUser($username) {
+		$.ajax({
+			type: "GET",
+			contentType: "application/json; charset=utf-8",
+			url: "/users/enable/" + $username,
+			data: JSON.stringify({ 'username': $username }),
+			dataType: "json"
+		}).done(function (data) {
+			// console.log("ajax: " + data.deleted);
+			alert(data.message);
+			if (data.deleted == true) {
+				location.reload();
+			}
+		}).fail(function (xhr, status, error) {
+			let errorMessage = xhr.status + ': ' + xhr.statusText;
+			alert('Error - ' + errorMessage);
+		});
+	}
+
+	$("#users #enable").click(function(){
+        let username = $(this).attr('data-user');
+        if(confirm('Do you want to enable ' + username + ' user?')){
+            enableUser(username);
+        }
+    });
+</script>
 <%- include("partials/footer") %>
