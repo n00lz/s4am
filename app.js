@@ -19,7 +19,7 @@ const usersRoutes = require('./routes/users');
 const indexRoutes = require('./routes/index');
 
 // DB Connection
-let url = "mongodb://localhost:27017/s4am";
+let url = process.env.CONNECTIONSTRING || "mongodb://localhost:27017/s4am";
 mongoose.connect(url,{
     useNewUrlParser: true,
     useCreateIndex: true,
@@ -42,7 +42,9 @@ app.use(flash());
 app.use(session({
     secret: 'wwfx',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    rolling: true,
+    cookie: { maxAge: 60000 }
 }));
 
 // Middleware functions to be called before every route
