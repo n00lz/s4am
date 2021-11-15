@@ -19,7 +19,7 @@ const usersRoutes = require('./routes/users');
 const indexRoutes = require('./routes/index');
 
 // DB Connection
-let url = "mongodb://localhost:27017/s4am";
+let url = process.env.CONNECTIONSTRING || "mongodb://localhost:27017/s4am";
 mongoose.connect(url,{
     useNewUrlParser: true,
     useCreateIndex: true,
