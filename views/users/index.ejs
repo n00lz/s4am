@@ -147,16 +147,36 @@
         });
     }
 
+    // $("#users #reset").click(function(){
+    //     let username = $(this).attr('data-user');
+    //     $('.ui.modal .content p').text('Set new password for ' + username);
+    //     $('.ui.modal').modal({detachable: false}).modal('show');
+    //     $('#reset-pass-btn').click(function(){
+    //         let password = $('.ui.modal input').val();
+    //         if(confirm('Password for the user ' + username + ' will be changed.')){
+    //             resetPassword(username, password);
+    //         }
+    // })
+    // })
     $("#users #reset").click(function(){
         let username = $(this).attr('data-user');
         $('.ui.modal .content p').text('Set new password for ' + username);
-        $('.ui.modal').modal({detachable: false}).modal('show');
-        $('#reset-pass-btn').click(function(){
-            let password = $('.ui.modal input').val();
-            if(confirm('Password for the user ' + username + ' will be changed.')){
-                resetPassword(username, password);
+        $('.ui.modal').modal({
+            closable: false,
+            onDeny: function(){
+                window.alert('No way to close this!');
+                return false
+            },
+            onApprove: function(){
+                $('#reset-pass-btn').click(function () {
+                    let password = $('.ui.modal input').val();
+                    if (confirm('Password for the user ' + username + ' will be changed.')) {
+                        resetPassword(username, password);
+                    }
+                })
+                return true
             }
-    })
+        }).modal('show');
     })
 
     $("#users #delete").click(function(){

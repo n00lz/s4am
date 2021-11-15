@@ -42,7 +42,9 @@ app.use(flash());
 app.use(session({
     secret: 'wwfx',
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    rolling: true,
+    cookie: { maxAge: 60000 }
 }));
 
 // Middleware functions to be called before every route
