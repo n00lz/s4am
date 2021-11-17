@@ -5,9 +5,9 @@ const User      = require('../models/user');
 const middleware = require('../middleware/index');
 const router    = express.Router();
 
-router.get('/', middleware.isLoggedIn, (req, res) => {
+router.get('/', middleware.isLoggedIn, async (req, res) => {
     User.getNewTicket();
-    let dUsers = User.disabledUsers();
+    let dUsers = await User.disabledUsers();
     let listUsers = dUsers;
     res.render('index', {disabledUsers: listUsers});
 });

@@ -5,15 +5,15 @@ const { validationResult } = require('express-validator');
 const middleware= require('../middleware');
 
 // INDEX - Show all users
-router.get('/', middleware.isLoggedIn, (req, res) => {
-    let lsUsers = user.getUsers();
+router.get('/', middleware.isLoggedIn, async (req, res) => {
+    let lsUsers = await user.getUsers();
     res.render('users/index', {users: lsUsers});
     // req.flash('success', 'Great you did it!');
     // res.redirect('back');
 });
 
 // CREATE - Add new user to database
-router.post('/', middleware.validation('createUser'), (req, res) => {
+router.post('/', middleware.validation('createUser'), async (req, res) => {
     const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
 
     if (!errors.isEmpty()) {
@@ -25,7 +25,7 @@ router.post('/', middleware.validation('createUser'), (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     // const user = new User(username,password,givenName,surname);
-    user.createUser(username,password,givenName,surname);
+    await user.createUser(username,password,givenName,surname);
     res.redirect('/');
 });
 
@@ -37,11 +37,11 @@ router.get('/add', middleware.isLoggedIn, (req, res) => {
 // SHOW - Show more info about one user
 
 // EDIT USER
-router.get('/reset', middleware.isLoggedIn, (req, res) => {
+router.get('/reset', middleware.isLoggedIn, async (req, res) => {
     let username = req.query.username;
     let password = req.query.password;
     // console.log(req.query);
-    let result = user.resetPassword(username, password);
+    let result = await user.resetPassword(username, password);
     if(result){
         return res.json({message:result.toString(), deleted:true});
     } else {
@@ -49,9 +49,10 @@ router.get('/reset', middleware.isLoggedIn, (req, res) => {
     }
 });
 
-router.get('/dis/:user', (req, res) => {
+router.get('/dis/:user', async (req, res) => {
     let username = req.params.user;
-    let result = user.disableUser(username);
+    let result = await user.disableUser(username);
+    console.dir(result);
     if(result){
         return res.json({message:result.toString(), deleted:true});
     } else {
@@ -60,13 +61,13 @@ router.get('/dis/:user', (req, res) => {
     
 });
 
-router.get('/enable/:user', (req, res) => {
+router.get('/enable/:user', async (req, res) => {
     let username = req.params.user;
-    let result = user.enableUser(username);
+    let result = await user.enableUser(username);
     if(result){
         return res.json({message:result.toString(), deleted:true});
     } else {
-        return res.json({message:'No disabled user', deleted:false});
+        return res.json({message:'No enabled user', deleted:false});
     }
     
 });
@@ -74,10 +75,10 @@ router.get('/enable/:user', (req, res) => {
 // UPDATE USER
 
 // DESTROY USER
-router.post('/del/:user', (req, res) => {
+router.post('/del/:user', async (req, res) => {
     // res.send('Groupname: ' + req.params.group);
     let username = req.params.user;
-    let result = user.deleteUser(username);
+    let result = await user.deleteUser(username);
     if(result){
         return res.json({message:result.toString(), deleted:true});
     } else {

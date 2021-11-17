@@ -5,16 +5,16 @@ const middleware = require('../middleware/index');
 const group     = require('../models/group');
 
 // INDEX - Show all groups
-router.get('/', middleware.isLoggedIn, (req, res) => {
-    var lsGroups = group.getGroups();
+router.get('/', middleware.isLoggedIn, async (req, res) => {
+    var lsGroups = await group.getGroups();
     res.render('groups/index', {groups: lsGroups});
 });
 
 // CREATE - Add new group to database
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     var groupName = req.body.name;
 
-    group.createGroup(groupName);
+    await group.createGroup(groupName);
     res.redirect('/');
 });
 
@@ -30,10 +30,10 @@ router.get('/add', middleware.isLoggedIn, (req, res) => {
 // UPDATE GROUP
 
 // DESTROY GROUP
-router.post('/del/:group', (req, res) => {
+router.post('/del/:group', async (req, res) => {
     // res.send('Groupname: ' + req.params.group);
     let groupname = req.params.group;
-    let result = group.deleteGroup(groupname);
+    let result = await group.deleteGroup(groupname);
     if(result){
         return res.json({message:result.toString(), deleted:true});
     } else {

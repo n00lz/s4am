@@ -1,16 +1,27 @@
-const { exec, spawn, execSync }  = require('child_process');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
-function cmd(shell_cmd){
-    exec(shell_cmd, (error, stdout, stderr) => {
-        if(error){
-            console.error(`exec error: ${error}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
-        if(stderr != '')
-        console.log(`stderr: ${stderr}`);
-    })
+async function cmd(shell_cmd) {
+    const { stdout, stderr } = await exec(shell_cmd);
+    console.log('stdout:', stdout);
+    if(stderr != ''){
+        console.error('stderr:', stderr);
+    }
+    return stdout;
 }
+// const { exec, spawn, execSync }  = require('child_process');
+
+// function cmd(shell_cmd){
+//     exec(shell_cmd, (error, stdout, stderr) => {
+//         if(error){
+//             console.error(`exec error: ${error}`);
+//             return;
+//         }
+//         console.log(`stdout: ${stdout}`);
+//         if(stderr != '')
+//         console.log(`stderr: ${stderr}`);
+//     })
+// }
 
 
 function createGroup(groupName){
@@ -19,15 +30,15 @@ function createGroup(groupName){
     return res;
 }
 
-function deleteGroup(groupname){
+async function deleteGroup(groupname){
     let cli = `samba-tool group delete ${groupname}`;
-    let res = execSync(cli);
+    let res = await cmd(cli);
     return res;
 }
 
-function getGroups(){
+async function getGroups(){
     let cli = 'samba-tool group list';
-    let res = execSync(cli);
+    let res = await cmd(cli);
     return res.toString().split('\n');
 }
 
