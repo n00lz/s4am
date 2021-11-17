@@ -1,25 +1,44 @@
-const { exec, execSync }  = require('child_process');
-const fs = require('fs');
-const { Duplex } = require('stream');
+// const { execSync }  = require('child_process');
+// const fs = require('fs');
+// const { Duplex } = require('stream');
 
-function cmd(shell_cmd){
-    exec(shell_cmd, (error, stdout, stderr) => {
-        if(error){
-            console.error(`exec error: ${error}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
-        if(stderr != '')
-        console.log(`stderr: ${stderr}`);
-    })
-}
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
+async function cmd(shell_cmd) {
+    const { stdout, stderr } = await exec(shell_cmd);
+    console.log('stdout:', stdout);
+    if(stderr != ''){
+        console.error('stderr:', stderr);
+    }
+    return stdout;
+  }
+
+// async function cmd(shell_cmd){
+//     const res = await exec(shell_cmd, (error, stdout, stderr) => {
+//         if(error){
+//             console.error(`exec error: ${error}`);
+//             return;
+//         }
+//         console.log('STDOUT FROM CMD FUNC: ' + stdout);
+//         if(stderr != ''){
+//             console.log(`stderr: ${stderr}`);
+//             return
+//         }
+//         return stdout;
+//     })
+//     return res;
+// }
     
-function createUser(username, password, givenName, surname){
+async function createUser(username, password, givenName, surname){
     let commands = [];
     commands.push(`samba-tool user create ${username} ${password} --given-name=${givenName} --surname=${surname}`);
     commands.push('bash unix_id.sh ' + username);
     let cli = commands.join(' && ');
-    let res = cmd(cli);
+    let res = await cmd(cli);
+    if(res === ''){
+        return `${username} is created.`
+    }
     // Add unix attributes to a user
     // const unixAttr = execSync('bash unix_id.sh ' + username);
     // console.log(unixAttr.toString());
@@ -61,27 +80,37 @@ function createUser(username, password, givenName, surname){
     return res;
 }
 
-function deleteUser(username){
+async function deleteUser(username){
     let cli = `samba-tool user delete ${username}`;
-    let res = execSync(cli);
+    // let res = execSync(cli);
+    let res = await cmd(cli);
+    if(res === ''){
+        return `${username} is deleted.`
+    }
     return res;
 }
 
-function disableUser(username){
+async function disableUser(username){
     let cli = `samba-tool user disable ${username}`;
-    let res = execSync(cli);
+    let res = await cmd(cli);
+    if(res === ''){
+        return `${username} is disabled.`
+    }
     return res;
 }
 
-function enableUser(username){
+async function enableUser(username){
     let cli = `samba-tool user enable ${username}`;
-    let res = execSync(cli);
+    let res = await cmd(cli);
+    if(res === ''){
+        return `${username} is enabled.`
+    }
     return res;
 }
 
-function resetPassword(username, password){
+async function resetPassword(username, password){
     let cli = `samba-tool user setpassword ${username} --newpassword=${password}`;
-    let res = execSync(cli);
+    let res = await cmd(cli);
     return res;
 }
 
@@ -91,25 +120,25 @@ function getNewTicket(){
     return res;
 }
 
-function disabledUsers(){
+async function disabledUsers(){
     let commands = [];
     commands.push("ldapsearch -H ldap://192.168.20.2 -Y GSSAPI -b 'DC=wwfx,DC=int' '(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))'");
     commands.push("sed -n 's/^[ \t]*uid:[ \t]*\\(.*\\)/\\1/p'");
     let cli = commands.join('|');
     console.log(cli);
-    let res = execSync(cli);
+    let res = await cmd(cli);
     return res.toString().split('\n').filter(function(i){return i});
 }
 
-function getUsers(){
+async function getUsers(){
     let users = {'result': []};
-    let dUsers = disabledUsers();
+    let dUsers = await disabledUsers();
     // let commands = [];
     // commands.push('samba-tool user list');
     // commands.push('egrep -v "Guest|krbtgt"');
     // let cli = commands.join('|');
     // let res = ('samba-tool user list|egrep -v "Guest|krbtgt"');
-    let cli = execSync('pdbedit -Lf');
+    let cli = await cmd('pdbedit -Lf');
     let listUsers = cli.toString().split('\n');
 
     for(let i = 0;  i < listUsers.length; i++){
