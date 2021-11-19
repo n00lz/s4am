@@ -114,12 +114,6 @@ async function resetPassword(username, password){
     return res;
 }
 
-function getNewTicket(){
-    let cli = 'kinit administrator@WWFX.INT -kt /root/krb5.keytab';
-    let res = cmd(cli);
-    return res;
-}
-
 async function disabledUsers(){
     let commands = [];
     commands.push("ldapsearch -H ldap://192.168.20.2 -Y GSSAPI -b 'DC=wwfx,DC=int' '(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=2))'");
@@ -161,7 +155,6 @@ async function getUsers(){
 
 exports.createUser = createUser;
 exports.resetPassword = resetPassword;
-exports.getNewTicket = getNewTicket;
 exports.deleteUser = deleteUser;
 exports.disableUser = disableUser;
 exports.enableUser = enableUser;
